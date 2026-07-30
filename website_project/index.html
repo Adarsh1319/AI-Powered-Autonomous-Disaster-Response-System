@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI-Powered Autonomous Disaster Response & Resource Optimization System</title>
+  <!-- FontAwesome for Premium Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Leaflet Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+  <!-- Leaflet Map JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <!-- Chart.js for Beautiful Analytics Graphs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Backdrop Overlay for Mobile Sidebar -->
+    <div class="sidebar-overlay" id="sidebar-overlay-backdrop"></div>
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+        <div class="logo-text">
+          DISASTER AI
+          <span>Autonomous Ops</span>
+        </div>
+        <button id="mobile-sidebar-close" style="background: none; border: none; color: var(--text-muted); font-size: 1.25rem; cursor: pointer; display: none; margin-left: auto; padding: 4px;">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      
+      <ul class="sidebar-menu">
+        <li class="menu-item active" data-tab="dashboard">
+          <a href="#"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+        </li>
+        <li class="menu-item" data-tab="prediction">
+          <a href="#"><i class="fa-solid fa-cloud-bolt"></i> Disaster Prediction</a>
+        </li>
+        <li class="menu-item" data-tab="search">
+          <a href="#"><i class="fa-solid fa-earth-asia"></i> Regional Search</a>
+        </li>
+        <li class="menu-item" data-tab="damage">
+          <a href="#"><i class="fa-solid fa-satellite"></i> Damage Assessment</a>
+        </li>
+        <li class="menu-item" data-tab="optimization">
+          <a href="#"><i class="fa-solid fa-truck-ramp-box"></i> Resource Optimization</a>
+        </li>
+        <li class="menu-item" data-tab="evacuation">
+          <a href="#"><i class="fa-solid fa-route"></i> Evacuation Planning</a>
+        </li>
+        <li class="menu-item" data-tab="copilot">
+          <a href="#"><i class="fa-solid fa-robot"></i> AI Copilot & SOS</a>
+        </li>
+        <li class="menu-item" data-tab="analytics">
+          <a href="#"><i class="fa-solid fa-square-poll-vertical"></i> Reports & Metrics</a>
+        </li>
+        <li class="menu-item" data-tab="settings">
+          <a href="#"><i class="fa-solid fa-sliders"></i> System Settings</a>
+        </li>
+      </ul>
+      
+      <div class="sidebar-footer">
+        <!-- Live Clock Sync Card -->
+        <div class="live-clock-card" style="margin-bottom: 12px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-normal); padding: 8px 10px; border-radius: var(--radius-md); display: flex; flex-direction: column; gap: 4px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);">
+          <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.8px; display: flex; justify-content: space-between; align-items: center;">
+            <span>SAT-NET CLOCK</span>
+            <span style="color: var(--secondary); display: inline-flex; align-items: center; gap: 3px;"><span class="status-dot" style="position: static; width: 6px; height: 6px; background: var(--secondary); animation: pulse-green 1.5s infinite; border-radius: 50%;"></span>CONNECTED</span>
+          </div>
+          <div id="live-sidebar-time" style="font-size: 1.15rem; font-weight: 700; font-family: monospace; color: #fff; letter-spacing: 0.5px;">--:--:--</div>
+          <div id="live-sidebar-date" style="font-size: 0.72rem; color: var(--text-secondary); font-weight: 500;">-- --- ----</div>
+        </div>
+
+        <div class="system-status">
+          <div class="status-dot" id="system-status-dot"></div>
+          <span id="system-status-text">All Systems Operational</span>
+        </div>
+        <button class="btn-sos" id="global-sos-btn">
+          <i class="fa-solid fa-circle-exclamation"></i> Emergency SOS
+        </button>
+      </div>
+    </aside>
+    
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Top Header -->
+      <header class="main-header">
+        <button class="hamburger-menu" id="mobile-sidebar-toggle" style="background: none; border: none; color: #fff; font-size: 1.35rem; cursor: pointer; display: none; margin-right: 12px; padding: 4px;">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="header-title">
+          <h1 id="page-title">Integrated System Dashboard</h1>
+          <p id="page-subtitle">Real-time Autonomous Decision Support & Logistics</p>
+        </div>
+        
+        <div class="header-actions">
+          <!-- Weather Widget -->
+          <div class="weather-widget">
+            <i class="fa-solid fa-cloud-sun-rain"></i>
+            <select id="weather-location-select">
+              <option value="hyderabad">Hyderabad, TG</option>
+              <option value="vikharabad">Vikharabad, TG</option>
+              <option value="warangal">Warangal, TG</option>
+            </select>
+            <span class="weather-temp" id="header-weather-temp">28°C</span>
+          </div>
+          
+          <!-- Notifications -->
+          <div class="notification-bell" id="bell-icon">
+            <i class="fa-regular fa-bell"></i>
+            <div class="bell-badge" id="bell-badge"></div>
+          </div>
+          
+          <!-- Profile -->
+          <div class="user-profile">
+            <div class="avatar">AD</div>
+            <div class="user-info">
+              <span class="user-name">Admin Officer</span>
+              <span class="user-role">Disaster Authority</span>
+            </div>
+          </div>
+        </div>
+      </header>
+      
+      <!-- Views Container -->
+      <div class="views-container">
+        
+        <!-- ==================== VIEW: DASHBOARD OVERVIEW ==================== -->
+        <div class="dashboard-view active" id="view-dashboard">
+          
+          <!-- Scope Switcher and Sync Header -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: rgba(30, 41, 59, 0.4); border: 1px solid var(--border-normal); padding: 10px 15px; border-radius: var(--radius-md); backdrop-filter: blur(10px);">
+            <div style="display: flex; align-items: center; gap: 15px;">
+              <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Monitoring Scope:</span>
+              <div class="control-presets" style="margin: 0;">
+                <span class="preset-btn active" id="scope-btn-local" style="padding: 6px 12px; font-size: 0.8rem; margin: 0;">Hyderabad Local Area</span>
+                <span class="preset-btn" id="scope-btn-national" style="padding: 6px 12px; font-size: 0.8rem; margin: 0;">Overall India View</span>
+              </div>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div style="display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--text-secondary); background: rgba(0, 0, 0, 0.2); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border-normal);">
+                <span class="status-dot" id="api-connection-status-dot" style="position: static; width: 6px; height: 6px; background: var(--secondary); display: inline-block; border-radius: 50%;"></span>
+                <span id="api-connection-status-text">Satellite Link Active</span>
+              </div>
+              <button class="preset-btn" id="btn-sync-live-data" style="margin: 0; padding: 6px 14px; font-size: 0.8rem; height: auto; background: var(--primary-gradient); color: #fff; border: none;">
+                <i class="fa-solid fa-arrows-rotate"></i> Sync Live Alerts & Telemetry
+              </button>
+            </div>
+          </div>
+          
+          <!-- Metrics Cards -->
+          <div class="metrics-grid">
+            <div class="metric-card critical">
+              <div class="metric-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+              <div class="metric-details">
+                <span class="metric-label">Risk Level</span>
+                <span class="metric-value" id="dashboard-risk-level">HIGH</span>
+                <span class="metric-trend up"><span>0.78 / 1.00</span> Risk Score</span>
+              </div>
+            </div>
+            
+            <div class="metric-card warning">
+              <div class="metric-icon"><i class="fa-solid fa-house-crack"></i></div>
+              <div class="metric-details">
+                <span class="metric-label">Affected Areas</span>
+                <span class="metric-value" id="dashboard-affected-areas">24</span>
+                <span class="metric-trend">Cities & Zones Selected</span>
+              </div>
+            </div>
+            
+            <div class="metric-card critical">
+              <div class="metric-icon"><i class="fa-solid fa-people-group"></i></div>
+              <div class="metric-details">
+                <span class="metric-label">People At Risk</span>
+                <span class="metric-value" id="dashboard-people-at-risk">128,450</span>
+                <span class="metric-trend">Estimated Population</span>
+              </div>
+            </div>
+            
+            <div class="metric-card info">
+              <div class="metric-icon"><i class="fa-solid fa-truck-moving"></i></div>
+              <div class="metric-details">
+                <span class="metric-label">Resources Deployed</span>
+                <span class="metric-value" id="dashboard-resources-deployed">156</span>
+                <span class="metric-trend success"><span id="dashboard-resource-pct">71.8%</span> Active</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Interactive National India Disaster Watch Grid -->
+          <div id="india-hubs-container" style="display: none; flex-direction: column; gap: 10px; margin-bottom: 20px; background: rgba(30, 41, 59, 0.2); border: 1px solid var(--border-normal); padding: 15px; border-radius: var(--radius-md);">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-normal); padding-bottom: 8px; margin-bottom: 5px;">
+              <h3 style="font-size: 0.95rem; font-weight: 700; color: #fff;"><i class="fa-solid fa-satellite-dish" style="color: var(--primary); margin-right: 5px;"></i> Active Indian National Monitoring Hubs</h3>
+              <span style="font-size: 0.72rem; color: var(--text-secondary);">Click any station to focus GIS dispatch map & query live weather</span>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 5px;" id="india-cities-grid">
+              <!-- Populated dynamically via JS on Scope switch -->
+            </div>
+            
+            <!-- Detailed Telemetry Inspector Panel -->
+            <div id="india-hub-details-panel" style="display: none; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: var(--radius-md); padding: 15px; margin-top: 15px; font-size: 0.82rem; line-height: 1.5; animation: fadeIn 0.3s ease;">
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-normal); padding-bottom: 8px; margin-bottom: 10px;">
+                <h4 style="margin: 0; font-size: 0.9rem; color: #fff; display: flex; align-items: center; gap: 8px;">
+                  <i class="fa-solid fa-circle-info" style="color: var(--primary);"></i> Station Telemetry Inspector: <span id="inspector-hub-name" style="font-weight: 700; color: var(--primary);">Mumbai Hub</span>
+                </h4>
+                <span id="inspector-hub-risk" style="padding: 2px 8px; border-radius: 4px; font-weight: bold; font-size: 0.7rem; color: #fff; background: var(--danger);">CRITICAL ALERT</span>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 12px;">
+                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-normal); padding: 8px; border-radius: 4px; text-align: center;">
+                  <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">Temperature</div>
+                  <strong style="font-size: 1rem; color: #fff;" id="inspector-temp">26°C</strong>
+                </div>
+                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-normal); padding: 8px; border-radius: 4px; text-align: center;">
+                  <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">Rainfall (24h)</div>
+                  <strong style="font-size: 1rem; color: #fff;" id="inspector-rain">210 mm</strong>
+                </div>
+                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-normal); padding: 8px; border-radius: 4px; text-align: center;">
+                  <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">Wind Speed</div>
+                  <strong style="font-size: 1rem; color: #fff;" id="inspector-wind">34 km/h</strong>
+                </div>
+                <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-normal); padding: 8px; border-radius: 4px; text-align: center;">
+                  <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">Soil Moisture</div>
+                  <strong style="font-size: 1rem; color: #fff;" id="inspector-soil">92%</strong>
+                </div>
+              </div>
+              <div id="inspector-assessment-box" style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.15); padding: 10px; border-radius: var(--radius-md); margin-bottom: 10px;">
+                <strong><i class="fa-solid fa-triangle-exclamation" id="inspector-assessment-icon" style="color: var(--danger);"></i> Early Warning Assessment:</strong>
+                <span id="inspector-assessment-text" style="color: var(--text-primary); margin-left: 5px;">--</span>
+              </div>
+              <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.15); padding: 10px; border-radius: var(--radius-md);">
+                <strong><i class="fa-solid fa-circle-check" style="color: var(--secondary);"></i> Recommended Dispatch Actions:</strong>
+                <span id="inspector-dispatch-text" style="color: var(--text-primary); margin-left: 5px;">--</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Widgets Section -->
+          <div class="widgets-grid">
+            <!-- Left: Messages Feed -->
+            <div class="widget-card">
+              <div class="widget-header">
+                <div class="widget-title">
+                  <i class="fa-solid fa-comment-sms"></i>
+                  Emergency Messages Feed (BERT Categorized)
+                </div>
+                <button class="widget-action-btn" id="btn-refresh-feed">Refresh Feed</button>
+              </div>
+              
+              <div class="msg-feed" id="dashboard-msg-feed">
+                <!-- Populated dynamically via JS -->
+              </div>
+            </div>
+            
+            <!-- Right: Damage Distribution and Alerts Overview -->
+            <div class="widget-card">
+              <div class="widget-header">
+                <div class="widget-title">
+                  <i class="fa-solid fa-chart-pie"></i>
+                  CNN Damage Classification Output
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas id="dashboard-damage-chart"></canvas>
+              </div>
+              <div class="widget-header" style="margin-top: 10px;">
+                <div class="widget-title">
+                  <i class="fa-solid fa-bell"></i>
+                  Active Broadcast System Alerts
+                </div>
+              </div>
+              <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border-normal);">
+                  <span>Email Broadcast Status:</span>
+                  <span class="text-success" style="color: var(--secondary); font-weight: 600;">ACTIVE</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 6px 0;">
+                  <span>SMS Gateway Status:</span>
+                  <span class="text-success" style="color: var(--secondary); font-weight: 600;">ONLINE</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- ==================== VIEW: DISASTER PREDICTION ==================== -->
+        <div class="dashboard-view" id="view-prediction">
+          <div class="prediction-panel">
+            <!-- Controls Card -->
+            <div class="widget-card weather-control-card">
+              <div class="widget-header">
+                <div class="widget-title">
+                  <i class="fa-solid fa-sliders"></i>
+                  Weather Parameter Controls (XGBoost Inputs)
+                </div>
+              </div>
+              
+              <!-- Location Search Input -->
+              <div class="gis-input-group" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-normal); padding: 12px; border-radius: var(--radius-md); margin-bottom: 5px;">
+                <label for="location-search-input" style="font-weight: 600;"><i class="fa-solid fa-magnifying-glass-location" style="color: var(--primary);"></i> Enter Specific Location Name</label>
+                <div style="display: flex; gap: 8px; margin-top: 6px;">
+                  <input type="text" class="chat-input" id="location-search-input" placeholder="Type location (e.g. LB Nagar, Gachibowli, Vikharabad)..." style="padding: 10px; height: 38px; margin-top: 0;">
+                  <button class="preset-btn active" id="btn-search-location" style="border-radius: var(--radius-md); padding: 0 16px; height: 38px;">Analyze</button>
+                </div>
+              </div>
+              
+              <!-- Location risk banner -->
+              <div id="location-risk-analysis-banner" style="display: none; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); padding: 10px 14px; border-radius: var(--radius-md); font-size: 0.85rem; margin-bottom: 5px;">
+                <i class="fa-solid fa-circle-info" style="color: var(--primary); margin-right: 6px;"></i>
+                <span id="location-risk-analysis-text">Regional telemetry analyzed.</span>
+              </div>
+              
+              <div class="control-presets">
+                <span class="preset-btn active" data-preset="normal">Stable Weather</span>
+                <span class="preset-btn" data-preset="monsoon">Monsoon / Heavy Rain</span>
+                <span class="preset-btn" data-preset="heatwave">Dry Heatwave</span>
+                <span class="preset-btn" data-preset="cyclone">Cyclone Alert</span>
+                <span class="preset-btn" data-preset="drought">Drought</span>
+              </div>
+              
+              <!-- Sliders -->
+              <div class="slider-group">
+                <div class="slider-label">
+                  <span>Rainfall (Precipitation)</span>
+                  <span class="slider-value"><span id="val-rainfall">12</span> mm</span>
+                </div>
+                <input type="range" class="custom-range-slider" id="slider-rainfall" min="0" max="300" value="12">
+              </div>
+              
+              <div class="slider-group">
+                <div class="slider-label">
+                  <span>Temperature</span>
+                  <span class="slider-value"><span id="val-temp">28</span> °C</span>
+                </div>
+                <input type="range" class="custom-range-slider" id="slider-temp" min="-10" max="50" value="28">
+              </div>
+              
+              <div class="slider-group">
+                <div class="slider-label">
+                  <span>Humidity</span>
+                  <span class="slider-value"><span id="val-humidity">55</span> %</span>
+                </div>
+                <input type="range" class="custom-range-slider" id="slider-humidity" min="0" max="100" value="55">
+              </div>
+              
+              <div class="slider-group">
+                <div class="slider-label">
+                  <span>Wind Speed</span>
+                  <span class="slider-value"><span id="val-wind">10</span> km/h</span>
+                </div>
+                <input type="range" class="custom-range-slider" id="slider-wind" min="0" max="150" value="10">
+              </div>
+              
+              <div class="slider-group">
+                <div class="slider-label">
+                  <span>River Water Level Gauge</span>
+                  <span class="slider-value"><span id="val-river">1.2</span> m</span>
+                </div>
+                <input type="range" class="custom-range-slider" id="slider-river" min="0" max="10" step="0.1" value="1.2">
+              </div>
+              
+              <div class="slider-group">
+                <div class="slider-label">
+                  <span>Soil Moisture Saturation</span>
+                  <span class="slider-value"><span id="val-soil">35</span> %</span>
+                </div>
+                <input type="range" class="custom-range-slider" id="slider-soil" min="0" max="100" value="35">
+              </div>
+            </div>
+            
+            <!-- Output Display Card -->
+            <div class="widget-card pred-outputs">
+              <div class="widget-header">
+                <div class="widget-title">
+                  <i class="fa-solid fa-brain"></i>
+                  XGBoost Classifier Probabilities & Risk Index
+                </div>
+              </div>
+              
+              <div class="gauge-section">
+                <!-- Gauge Circle -->
+                <div class="radial-gauge-container">
+                  <svg class="radial-gauge">
+                    <circle class="radial-gauge-bg" cx="70" cy="70" r="60"></circle>
+                    <circle class="radial-gauge-fill" id="prediction-gauge-fill" cx="70" cy="70" r="60"></circle>
+                  </svg>
+                  <div class="radial-gauge-text">
+                    <span class="gauge-pct" id="prediction-gauge-pct">18%</span>
+                    <span class="gauge-lbl">Disaster Prob</span>
+                  </div>
+                </div>
+                
+                <div class="risk-level-display">
+                  <span style="font-size: 0.8rem; color: var(--text-secondary);">Current Warning Risk Level</span>
+                  <span class="risk-badge low" id="prediction-risk-badge">LOW RISK</span>
+                </div>
+              </div>
+              
+              <!-- Probabilities breakdown bars -->
+              <div class="prediction-breakdown">
+                <div class="breakdown-row">
+                  <div class="breakdown-lbl">
+                    <span>Flood Likelihood</span>
+                    <span id="pct-flood">12%</span>
+                  </div>
+                  <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="bar-flood" style="width: 12%;"></div>
+                  </div>
+                </div>
+                
+                <div class="breakdown-row">
+                  <div class="breakdown-lbl">
+                    <span>Wildfire Likelihood</span>
+                    <span id="pct-wildfire">3%</span>
+                  </div>
+                  <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="bar-wildfire" style="width: 3%;"></div>
+                  </div>
+                </div>
+                
+                <div class="breakdown-row">
+                  <div class="breakdown-lbl">
+                    <span>Landslide Trigger Probability</span>
+                    <span id="pct-landslide">5%</span>
+                  </div>
+                  <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="bar-landslide" style="width: 5%;"></div>
+                  </div>
+                </div>
+                
+                <div class="breakdown-row">
+                  <div class="breakdown-lbl">
+                    <span>Cyclone Likelihood</span>
+                    <span id="pct-cyclone">2%</span>
+                  </div>
+                  <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="bar-cyclone" style="width: 2%;"></div>
+                  </div>
+                </div>
+              </div>
+              
+              <div style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; padding-top: 10px; border-top: 1px solid var(--border-normal);">
+                <strong>XGBoost Model Information:</strong> Model trained on 2012-2024 historical weather records for Telangana State. Model Accuracy: 94.8%, ROC-AUC: 0.982. Output updates in real time based on slider adjustments.
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- ==================== VIEW: REGIONAL STATUS SEARCH ==================== -->
+        <div class="dashboard-view" id="view-search">
+          <div class="prediction-panel" style="grid-template-columns: 1.1fr 1.9fr;">
+            <!-- Search Input Card -->
+            <div class="widget-card">
+              <div class="widget-header">
+                <div class="widget-title">
+                  <i class="fa-solid fa-magnifying-glass-location"></i>
+                  Query Regional Telemetry
+                </div>
+              </div>
+              <p style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4;">
+                Enter any town, district, or city name in Telangana to query meteorological sensors and retrieve an XGBoost early warning risk report.
+              </p>
+              <div class="gis-input-group" style="margin-top: 15px;">
+                <input type="text" class="chat-input" id="global-search-input" placeholder="Type location (e.g. Warangal, Karimnagar, Nalgonda, Miyapur)..." style="margin-top: 0;">
+              </div>
+              <button class="btn-analyze" id="btn-global-search" style="width: 100%; margin-top: 10px;">
+                <i class="fa-solid fa-satellite-dish"></i> Fetch Telemetry & Predict Risk
+              </button>
+              
+              <!-- Quick Presets -->
+              <div style="margin-top: 15px;">
+                <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 6px;">Quick Search Presets:</span>
+                <div class="control-presets">
+                  <span class="preset-btn" data-search="Warangal">Warangal</span>
+                  <span class="preset-btn" data-search="Karimnagar">Karimnagar</span>
+                  <span class="preset-btn" data-search="LB Nagar">LB Nagar</span>
+                  <span class="preset-btn" data-search="Vikharabad">Vikharabad</span>
+                  <span class="preset-btn" data-search="Gachibowli">Gachibowli</span>
+                  <span class="preset-btn" data-search="Nalgonda">Nalgonda</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Report Output Card -->
+            <div class="widget-card" id="search-report-card" style="display: none;">
+              <div class="widget-header" style="border-bottom: 1px solid var(--border-normal); padding-bottom: 10px;">
+                <div class="widget-title">
+                  <i class="fa-solid fa-file-shield" style="color: var(--secondary);"></i>
+                  Disaster Risk & Vulnerability Report
+                </div>
+                <span class="risk-badge low" id="search-report-risk-badge" style="font-size: 0.8rem; padding: 4px 10px;">LOW RISK</span>
+              </div>
+              
+              <div style="display: grid; grid-template-columns: 1.2fr 1.8fr; gap: 20px; margin-top: 15px;">
+                <!-- Left: Geo & Weather -->
+                <div style="font-size: 0.8rem; display: flex; flex-direction: column; gap: 8px; border-right: 1px solid var(--border-normal); padding-right: 15px;">
+                  <h4 style="font-size: 0.9rem; color: var(--primary);">Geospatial Telemetry</h4>
+                  <div>Location: <strong id="report-geo-name" style="color: #fff;">--</strong></div>
+                  <div>Coordinates: <span id="report-geo-coords" style="color: #fff;">--</span></div>
+                  <div>Elevation Profile: <span id="report-geo-elev" style="color: #fff;">--</span></div>
+                  
+                  <h4 style="font-size: 0.9rem; color: var(--primary); margin-top: 10px;">Meteorological Sensors</h4>
+                  <div>Temperature: <span id="report-weather-temp" style="color: #fff;">--</span></div>
+                  <div>Precipitation (Rain): <span id="report-weather-rain" style="color: #fff;">--</span></div>
+                  <div>Wind Velocity: <span id="report-weather-wind" style="color: #fff;">--</span></div>
+                  <div>Soil Saturation: <span id="report-weather-soil" style="color: #fff;">--</span></div>
+                </div>
+                
+                <!-- Right: Risk Breakdown -->
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                  <h4 style="font-size: 0.9rem; color: var(--primary);">XGBoost Classifier Outputs</h4>
+                  
+                  <div class="breakdown-row">
+                    <div class="breakdown-lbl"><span>Flood Risk Inundation</span><span id="report-pct-flood">0%</span></div>
+                    <div class="progress-bar-container"><div class="progress-bar-fill" id="report-bar-flood" style="width: 0%;"></div></div>
+                  </div>
+                  <div class="breakdown-row">
+                    <div class="breakdown-lbl"><span>Wildfire Propagation Risk</span><span id="report-pct-wildfire">0%</span></div>
+                    <div class="progress-bar-container"><div class="progress-bar-fill" id="report-bar-wildfire" style="width: 0%;"></div></div>
+                  </div>
+                  <div class="breakdown-row">
+                    <div class="breakdown-lbl"><span>Landslide Slope Failure</span><span id="report-pct-landslide">0%</span></div>
+                    <div class="progress-bar-container"><div class="progress-bar-fill" id="report-bar-landslide" style="width: 0%;"></div></div>
+                  </div>
+                  <div class="breakdown-row">
+                    <div class="breakdown-lbl"><span>Cyclone Wind Threat</span><span id="report-pct-cyclone">0%</span></div>
+                    <div class="progress-bar-container"><div class="progress-bar-fill" id="report-bar-cyclone" style="width: 0%;"></div></div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Insights -->
+              <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-normal); padding: 12px; border-radius: var(--radius-md); font-size: 0.8rem; line-height: 1.45; margin-top: 15px;">
+                <strong>Vulnerability Analysis & Recommendation:</strong><br>
+                <span id="report-insights-text">Loading insights...</span>
+              </div>
+              
+              <!-- Assets -->
+              <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; font-size: 0.75rem; text-align: center;">
+                <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-normal); padding: 8px; border-radius: 4px;">
+                  <i class="fa-solid fa-shield-halved" style="color: var(--secondary); margin-bottom: 4px; display: block; font-size: 1rem;"></i>
+                  Nearest Shelter: <strong id="report-asset-shelter" style="display: block; color: #fff;">--</strong>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-normal); padding: 8px; border-radius: 4px;">
+                  <i class="fa-solid fa-house-chimney-medical" style="color: var(--primary); margin-bottom: 4px; display: block; font-size: 1rem;"></i>
+                  NDRF Station: <strong id="report-asset-base" style="display: block; color: #fff;">--</strong>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-normal); padding: 8px; border-radius: 4px;">
+                  <i class="fa-solid fa-square-h" style="color: var(--danger); margin-bottom: 4px; display: block; font-size: 1rem;"></i>
+                  Local Hospital: <strong id="report-asset-hosp" style="display: block; color: #fff;">--</strong>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Welcome Search Pane -->
+            <div class="widget-card" id="search-welcome-pane" style="display: flex; align-items: center; justify-content: center; text-align: center; height: 350px; color: var(--text-secondary);">
+              <div>
+                <i class="fa-solid fa-satellite-dish" style="font-size: 3.5rem; color: var(--primary); margin-bottom: 15px; animation: pulse-orange 2s infinite;"></i>
+                <h3>Satellite Telemetry Connection Ready</h3>
+                <p style="font-size: 0.85rem; max-width: 320px; margin: 8px auto 0;">Search any location in the left panel to fetch meteorological data and predict local disaster probabilities.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- ==================== VIEW: DAMAGE ASSESSMENT ==================== -->
+        <div class="dashboard-view" id="view-damage">
+          <div class="damage-panel">
+            <div class="widget-card upload-card">
+              <div class="widget-header">
+                <div class="widget-title">
+                  <i class="fa-solid fa-images"></i>
+                  Satellite Imagery Damage Mapping
+                </div>
+              </div>
+              
+              <!-- Clarifying explanation box -->
+              <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.2); padding: 12px; border-radius: var(--radius-md); font-size: 0.8rem; line-height: 1.45;">
+                <strong><i class="fa-solid fa-circle-info" style="color: var(--primary);"></i> How to read this section:</strong><br>
+                1. Select an image from the gallery below (Hyderabad Flood vs. Vikharabad Wildfire).<br>
+                2. Click the <strong>Run CNN Damage Classification</strong> button.<br>
+                3. The AI scans the image and highlights damaged zones using the color heatmaps.
+              </div>
+              
+              <div class="preset-gallery">
+                <div class="gallery-item active" data-scenario="flood">
+                  <img src="https://files.catbox.moe/yj64r4.jpg" alt="Flood satellite view">
+                  <div class="gallery-item-label">Hyderabad Flood Area</div>
+                </div>
+                <div class="gallery-item" data-scenario="wildfire">
+                  <img src="https://files.catbox.moe/df4n8z.jpg" alt="Wildfire satellite view">
+                  <div class="gallery-item-label">Vikharabad Forest Reserves</div>
+                </div>
+              </div>
+              
+              <div class="image-viewer-container" id="cnn-image-viewer-container">
+                <img id="cnn-display-img" src="https://files.catbox.moe/yj64r4.jpg" alt="Satellite Main View">
+                <div class="scan-line"></div>
+                <canvas class="damage-overlay-canvas" id="cnn-damage-canvas"></canvas>
+              </div>
+              
+              <!-- Color Code Legend -->
+              <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; font-size: 0.72rem; text-align: center; font-weight: 600;">
+                <div style="background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.25); padding: 4px; border-radius: 4px;">🔴 Severe</div>
+                <div style="background: rgba(245, 158, 11, 0.15); color: var(--accent); border: 1px solid rgba(245, 158, 11, 0.25); padding: 4px; border-radius: 4px;">🟠 Moderate</div>
+                <div style="background: rgba(59, 130, 246, 0.15); color: var(--primary); border: 1px solid rgba(59, 130, 246, 0.25); padding: 4px; border-radius: 4px;">🔵 Low</div>
+                <div style="background: rgba(16, 185, 129, 0.15); color: var(--secondary); border: 1px solid rgba(16, 185, 129, 0.25); padding: 4px; border-radius: 4px;">🟢 None</div>
+              </div>
+              
+              <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button class="btn-analyze" id="btn-run-cnn" style="flex: 1; margin-top: 0;">
+                  <i class="fa-solid fa-expand"></i> Run CNN Damage Classification
+                </button>
+                <button class="preset-btn" id="btn-toggle-cnn-overlay" style="margin: 0; padding: 10px 14px; font-size: 0.8rem; display: flex; align-items: center; gap: 5px; border-radius: var(--radius-md);" disabled>
+                  <i class="fa-solid fa-eye-slash"></i> Toggle Heatmap
+                </button>
+              </div>
+              
+              <!-- CNN Steps Output Container -->
+              <div style="margin-top: 10px; display: none;" id="cnn-steps-container">
+                <div style="font-size: 0.72rem; font-family: monospace; color: #34d399; background: #06090e; padding: 10px; border-radius: var(--radius-md); border: 1px solid var(--border-normal); max-height: 100px; overflow-y: auto;" id="cnn-processing-log">
+                </div>
+              </div>
+            </div>
+            
+            <!-- CNN Results Panel -->
+            <div class="widget-card">
+              <div class="widget-header">
+                <div class="widget-title">
+                  <i class="fa-solid fa-chart-simple"></i>
+                  CNN Neural Network Output Details
+                </div>
+              </div>
+              
+              <!-- AI Executive Action Summary -->
+              <div id="cnn-executive-report" style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); padding: 12px; border-radius: var(--radius-md); font-size: 0.8rem; line-height: 1.45; display: none;">
+                <strong style="color: var(--danger); font-size: 0.82rem;"><i class="fa-solid fa-triangle-exclamation"></i> AI Executive Action Summary:</strong>
+                <div id="cnn-executive-action-text" style="margin-top: 5px; color: var(--text-primary);">--</div>
+              </div>
+              
+              <div class="cnn-meta">
+                <p>Location Examined: <span id="cnn-loc">LB Nagar & Musi River Basin, Hyderabad</span></p>
+                <p>Captured Timestamp: <span id="cnn-time">08 May 2026, 09:48 AM</span></p>
+              </div>
+              
+              <div class="allocation-metrics" style="margin-top: 10px;">
+                <div class="allocation-metric-box">
+                  <div class="alloc-label">Overall Damage</div>
+                  <div class="alloc-val" id="cnn-overall-damage" style="color: var(--danger);">SEVERE</div>
+                </div>
+                <div class="allocation-metric-box">
+                  <div class="alloc-label">CNN Confidence</div>
+                  <div class="alloc-val" id="cnn-confidence">92%</div>
+                </div>
+              </div>
+              
+              <div class="chart-container" style="height: 180px; margin-top: 10px;">
+                <canvas id="cnn-damage-pie-chart"></canvas>
+              </div>
+              
+              <div style="font-size: 0.85rem; color: var(--text-secondary); display: flex; flex-direction: column; gap: 6px;">
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-normal); padding: 4px 0;">
+                  <span>Submerged / Damaged Buildings:</span>
+                  <span id="stat-buildings" style="font-weight: bold; color: var(--text-primary);">485 units</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-normal); padding: 4px 0;">
+                  <span>Blocked Roads Detected:</span>
+                  <span id="stat-roads" style="font-weight: bold; color: var(--text-primary);">14 road segments</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 4px 0;">
+                  <span>Total Affected Land Area:</span>
+                  <span id="stat-area" style="font-weight: bold; color: var(--text-primary);">12.64 km²</span>
+                </div>
+              </div>
+              
+              <!-- Interactive Heatmap Regions list -->
+              <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 6px;">
+                <h4 style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Detected Damage Zones (Interactive):</h4>
+                <div id="cnn-detected-zones-list" style="display: flex; flex-direction: column; gap: 6px;">
+                  <div style="font-size: 0.78rem; text-align: center; color: var(--text-muted); border: 1px dashed var(--border-normal); padding: 10px; border-radius: 4px;">Run CNN scan to classify specific coordinates.</div>
+                </div>
+              </div>
+              
+              <!-- AI Diagnostic Insights Box -->
+              <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.15); padding: 12px; border-radius: var(--radius-md); font-size: 0.8rem; line-height: 1.45; margin-top: 15px;" id="cnn-diagnostic-insights">
+                <strong><i class="fa-solid fa-circle-nodes" style="color: var(--primary);"></i> AI Diagnostic Insights:</strong><br>
+                <span id="cnn-insights-text">Run the CNN scan to retrieve spatial intelligence diagnostics.</span>
+              </div>
+              
+              <!-- What is the Outcome and Action? -->
+              <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.15); padding: 12px; border-radius: var(--radius-md); font-size: 0.8rem; line-height: 1.45; margin-top: 10px;">
+                <strong><i class="fa-solid fa-clipboard-list" style="color: var(--secondary);"></i> Real-World Response Actions (The Outcome):</strong>
+                <ul style="padding-left: 14px; margin-top: 6px; display: flex; flex-direction: column; gap: 4px; list-style: none;">
+                  <li>🚑 <strong>Dispatches Rescue Units</strong>: Coordinates of 🔴 <strong>Severe</strong> zones are sent to the NDRF base camp to dispatch boats and helicopters.</li>
+                  <li>⛔ <strong>Identifies Blocked Roads</strong>: 🟠 <strong>Moderate</strong> blocked roads are flagged to prevent rescue vehicles from getting stuck.</li>
+                  <li>📢 <strong>Targeted SOS Warnings</strong>: Automatically texts evacuation instructions to residents located inside 🔴 and 🟠 zones.</li>
+                  <li>🏥 <strong>Setup Relief Centers</strong>: Safe 🟢 <strong>No Damage</strong> zones are selected to deploy mobile medical clinics and food distribution hubs.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- ==================== VIEW: RESOURCE OPTIMIZATION ==================== -->
+        <div class="dashboard-view" id="view-optimization">
+          <div class="resource-panel">
+            <!-- Left: GIS Map -->
+            <div class="widget-card map-card">
+              <div class="widget-header">
+                <div class="widget-title">
+                  <i class="fa-solid fa-map-location-dot"></i>
+                  Real-time GIS Dispatch Map (RL & Genetic Allocations)
+                </div>
+              </div>
+              <div class="map-container" id="optimization-map"></div>
+              
+              <div class="allocation-metrics" style="margin-top: 15px; margin-bottom: 15px;">
+                <div class="allocation-metric-box">
+                  <div class="alloc-label">RL Response Time Efficiency</div>
+                  <div class="alloc-val" id="opt-time-val">--</div>
+                </div>
+                <div class="allocation-metric-box">
+                  <div class="alloc-label">GA Resource Utilization</div>
+                  <div class="alloc-val" id="opt-util-val">--</div>
+                </div>
+              </div>
+              
+              <button class="btn-optimize" id="btn-run-optimization">
+                <i class="fa-solid fa-circle-nodes"></i> Trigger RL + GA Optimization Allocation
+              </button>
+            </div>
+            
+            <!-- Right: Log & Inventory -->
+            <div class="widget-card">
+              <div class="widget-header">
+                <div class="widget-title">
+                  <i class="fa-solid fa-list-check"></i>
+                  Active Resource Inventory
+                </div>
+              </div>
+              
+              <div class="optimization-log" id="opt-console-log">
+                <!-- Populated during optimization run -->
+              </div>
+              
+              <div class="inventory-list" id="resource-inventory-list">
+                <!-- Populated dynamically via JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- ==================== VIEW: GIS EVACUATION PLANNING ==================== -->
+        <div class="dashboard-view" id="view-evacuation">
+          <div class="gis-panel">
+            <!-- Left Map -->
+            <div class="widget-card map-card">
+              <div class="widget-header">
+                <div class="widget-title">
+                  <i class="fa-solid fa-location-arrow"></i>
+                  Autonomous Evacuation Route Planner
+                </div>
+              </div>
+              <div class="map-container" id="evacuation-map"></div>
+            </div>
+            
+            <!-- Right Settings -->
+            <div class="widget-card gis-console">
+              <div class="widget-header">
+                <div class="widget-title">
+                  <i class="fa-solid fa-compass"></i>
+                  Route Navigation Console
+                </div>
+              </div>
+              
+              <div class="gis-input-group">
+                <label for="gis-start-location">Select Affected Area (Start)</label>
+                <select id="gis-start-location">
+                  <option value="musi-river">Musi River Overflow Zone</option>
+                  <option value="chaitanyapuri">Chaitanyapuri Residential Zone</option>
+                  <option value="nagole">Nagole Main Road</option>
+                </select>
+              </div>
+              
+              <div class="gis-input-group">
+                <label for="gis-end-location">Select Safe Shelter (Destination)</label>
+                <select id="gis-end-location">
+                  <option value="sports-complex">LB Nagar Sports Complex Shelter</option>
+                  <option value="uppal-school">Uppal Govt School Shelter</option>
+                </select>
+              </div>
+              
+              <div class="route-meta">
+                <div class="route-meta-row">
+                  <span class="route-meta-label">Est. Evacuation Distance:</span>
+                  <span class="route-meta-value" id="route-distance">--</span>
+                </div>
+                <div class="route-meta-row">
+                  <span class="route-meta-label">Est. Evacuation Time:</span>
+                  <span class="route-meta-value" id="route-time">--</span>
+                </div>
+                <div class="route-meta-row">
+                  <span class="route-meta-label">Safety Rating Score:</span>
+                  <span class="route-meta-value safe" id="route-safety">--</span>
+                </div>
+              </div>
+              
+              <div style="font-weight: 600; font-size: 0.85rem;">Turn-by-Turn Safety Guidance:</div>
+              <div class="directions-list" id="route-directions-list">
+                <div style="font-size: 0.8rem; color: var(--text-muted); text-align: center; padding: 20px;">
+                  Select origin and destination to generate evacuation directions.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- ==================== VIEW: AI COPILOT & SOS ALERTS ==================== -->
+        <div class="dashboard-view" id="view-copilot">
+          <div class="copilot-panel">
+            <!-- Chat Card -->
+            <div class="widget-card chat-card">
+              <div class="widget-header">
+                <div class="widget-title">
+                  <i class="fa-solid fa-robot"></i>
+                  Autonomous Emergency Decision Copilot
+                </div>
+                <span class="system-status" style="font-size: 0.75rem;"><span class="status-dot"></span>Online</span>
+              </div>
+              
+              <!-- Messages History -->
+              <div class="chat-history" id="copilot-chat-history">
+                <div class="chat-msg bot">
+                  Hello! I am the AI Copilot for this autonomous disaster response system. I can analyze risk metrics, draft localized warning alerts, coordinates dispatch assets, or plan escape routing paths. How can I help you support this emergency?
+                  <div class="chat-msg-time">System Copilot</div>
+                </div>
+              </div>
+              
+              <!-- Typing Indicator -->
+              <div class="typing-bubble" id="copilot-typing">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+              </div>
+              
+              <!-- Suggested chips -->
+              <div class="suggested-chips">
+                <button class="chip-btn" data-query="weather alert">Get weather alert details</button>
+                <button class="chip-btn" data-query="shelter status">Check shelter capacities</button>
+                <button class="chip-btn" data-query="draft alert">Draft evacuation text alert</button>
+                <button class="chip-btn" data-query="evacuate lb nagar">LB Nagar evacuation route plan</button>
+              </div>
+              
+              <!-- Input Area -->
+              <div class="chat-input-area" style="margin-top: 10px;">
+                <input type="text" class="chat-input" id="copilot-chat-input" placeholder="Type instructions or questions to Copilot (e.g. 'Draft alert to residents')...">
+                <button class="btn-chat-send" id="btn-copilot-send"><i class="fa-solid fa-paper-plane"></i></button>
+              </div>
+            </div>
+            
+            <!-- Alert Broadcasting Console -->
+            <div class="widget-card alert-console-card">
+              <div class="widget-header">
+                <div class="widget-title">
+                  <i class="fa-solid fa-tower-cell"></i>
+                  Emergency Broadcast Alert Console
+                </div>
+              </div>
+              
+              <div class="gis-input-group">
+                <label>Select Target Disaster Location Zones</label>
+                <select id="alert-target-zone">
+                  <option value="all">All Affected Zones (128,450 Residents)</option>
+                  <option value="lb-nagar">LB Nagar Region (85,430 Residents)</option>
+                  <option value="vikharabad">Vikharabad Margins (12,500 Residents)</option>
+                  <option value="uppal">Uppal Area (30,520 Residents)</option>
+                </select>
+              </div>
+              
+              <div class="gis-input-group">
+                <label>Broadcast Channels</label>
+                <div class="broadcast-options">
+                  <label class="checkbox-group">
+                    <input type="checkbox" id="channel-sms" checked> SMS Warning
+                  </label>
+                  <label class="checkbox-group">
+                    <input type="checkbox" id="channel-email" checked> Email Alert
+                  </label>
+                  <label class="checkbox-group">
+                    <input type="checkbox" id="channel-wa"> WhatsApp
+                  </label>
+                </div>
+              </div>
+              
+              <div class="gis-input-group">
+                <label for="alert-message-text">Emergency Broadcast Warning Message</label>
+                <textarea class="alert-textarea" id="alert-message-text">EMERGENCY WARNING: Severe flooding is imminent in your zone. Immediately evacuate to the nearest shelter. Avoid low-lying streets and riverbanks. Stay updated via local channels.</textarea>
+              </div>
+              
+              <button class="btn-broadcast" id="btn-send-broadcast">
+                <i class="fa-solid fa-bullhorn"></i> Send Automated Broadcast
+              </button>
+              
+              <!-- Progress Indicator -->
+              <div class="broadcast-progress" id="broadcast-progress-container">
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600;">
+                  <span>Broadcasting Status...</span>
+                  <span id="broadcast-progress-pct">0%</span>
+                </div>
+                <div class="progress-bar-container">
+                  <div class="progress-bar-fill" id="broadcast-progress-bar" style="width: 0%; background-color: var(--danger);"></div>
+                </div>
+                <div style="font-size: 0.75rem; font-family: monospace; color: var(--text-secondary); max-height: 80px; overflow-y: auto;" id="broadcast-log">
+                  <!-- Broadcast items -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- ==================== VIEW: REPORTS & METRICS ==================== -->
+        <div class="dashboard-view" id="view-analytics">
+          <div class="analytics-view">
+            <!-- Table 3 Performance Comparison -->
+            <div class="performance-table-container">
+              <h3 style="padding: 16px 20px; font-size: 1.1rem; border-bottom: 1px solid var(--border-normal);">
+                Table: Framework Functional Comparison with Existing Methods
+              </h3>
+              <table class="performance-table">
+                <thead>
+                  <tr>
+                    <th>Disaster Management System Method</th>
+                    <th>Prediction (XGBoost)</th>
+                    <th>Damage Assessment (CNN)</th>
+                    <th>Resource Optimization (RL+GA)</th>
+                    <th>GIS Route Mapping</th>
+                    <th>AI Copilot / LLM</th>
+                    <th>Email/SMS Notifications</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Traditional Framework</strong></td>
+                    <td class="cross-icon"><i class="fa-solid fa-xmark"></i></td>
+                    <td class="cross-icon"><i class="fa-solid fa-xmark"></i></td>
+                    <td class="cross-icon"><i class="fa-solid fa-xmark"></i></td>
+                    <td class="cross-icon"><i class="fa-solid fa-xmark"></i></td>
+                    <td class="cross-icon"><i class="fa-solid fa-xmark"></i></td>
+                    <td class="cross-icon"><i class="fa-solid fa-xmark"></i></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Machine Learning-Based</strong></td>
+                    <td class="check-icon"><i class="fa-solid fa-check"></i></td>
+                    <td class="cross-icon"><i class="fa-solid fa-xmark"></i></td>
+                    <td class="cross-icon"><i class="fa-solid fa-xmark"></i></td>
+                    <td class="cross-icon"><i class="fa-solid fa-xmark"></i></td>
+                    <td class="cross-icon"><i class="fa-solid fa-xmark"></i></td>
+                    <td class="cross-icon"><i class="fa-solid fa-xmark"></i></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Deep Learning-Based</strong></td>
+                    <td class="check-icon"><i class="fa-solid fa-check"></i></td>
+                    <td class="check-icon"><i class="fa-solid fa-check"></i></td>
+                    <td class="cross-icon"><i class="fa-solid fa-xmark"></i></td>
+                    <td class="cross-icon"><i class="fa-solid fa-xmark"></i></td>
+                    <td class="cross-icon"><i class="fa-solid fa-xmark"></i></td>
+                    <td class="cross-icon"><i class="fa-solid fa-xmark"></i></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Existing Platforms (e.g. GDACS)</strong></td>
+                    <td class="check-icon"><i class="fa-solid fa-check"></i></td>
+                    <td class="check-icon"><i class="fa-solid fa-check"></i></td>
+                    <td style="color: var(--accent); font-weight: bold;">Partial</td>
+                    <td style="color: var(--accent); font-weight: bold;">Partial</td>
+                    <td class="cross-icon"><i class="fa-solid fa-xmark"></i></td>
+                    <td style="color: var(--accent); font-weight: bold;">Partial</td>
+                  </tr>
+                  <tr style="background: rgba(59, 130, 246, 0.05);">
+                    <td><strong>Proposed Autonomous System (Ours)</strong></td>
+                    <td class="check-icon"><i class="fa-solid fa-check"></i></td>
+                    <td class="check-icon"><i class="fa-solid fa-check"></i></td>
+                    <td class="check-icon"><i class="fa-solid fa-check"></i></td>
+                    <td class="check-icon"><i class="fa-solid fa-check"></i></td>
+                    <td class="check-icon"><i class="fa-solid fa-check"></i></td>
+                    <td class="check-icon"><i class="fa-solid fa-check"></i></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            
+            <!-- Model performance charts -->
+            <div class="model-metrics-grid">
+              <div class="widget-card">
+                <div class="widget-header">
+                  <div class="widget-title">
+                    <i class="fa-solid fa-chart-line"></i> Model F1-Scores Comparison
+                  </div>
+                </div>
+                <div class="chart-container" style="height: 200px;">
+                  <canvas id="chart-models-f1"></canvas>
+                </div>
+              </div>
+              
+              <div class="widget-card">
+                <div class="widget-header">
+                  <div class="widget-title">
+                    <i class="fa-solid fa-gauge-high"></i> Optimization Efficiency Improvements
+                  </div>
+                </div>
+                <div class="chart-container" style="height: 200px;">
+                  <canvas id="chart-optimization-gains"></canvas>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Export card -->
+            <div class="widget-card export-card">
+              <div>
+                <h4 style="font-weight: 700;">Export Consolidated System Report</h4>
+                <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px;">Compile current prediction risk scores, damage satellite metrics, and resource logs into an printable layout.</p>
+              </div>
+              <button class="btn-export" id="btn-export-pdf">
+                <i class="fa-solid fa-file-pdf"></i> Export PDF Report
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- ==================== VIEW: SYSTEM SETTINGS ==================== -->
+        <div class="dashboard-view" id="view-settings">
+          <div class="prediction-panel">
+            <div class="widget-card">
+              <div class="widget-header">
+                <div class="widget-title">
+                  <i class="fa-solid fa-key"></i> API Integration Details
+                </div>
+              </div>
+              
+              <div class="gis-input-group">
+                <label>OpenWeatherMap API Key</label>
+                <input type="password" class="chat-input" value="••••••••••••••••••••••••••••••••" style="margin-top: 4px;">
+              </div>
+              <div class="gis-input-group" style="margin-top: 10px;">
+                <label>USGS Earthquake Real-time API Endpoint</label>
+                <input type="text" class="chat-input" value="https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson" style="margin-top: 4px;">
+              </div>
+              <div class="gis-input-group" style="margin-top: 10px;">
+                <label>Supabase DB Connection URI</label>
+                <input type="password" class="chat-input" value="postgresql://postgres:••••••••••••••••@db.supabase.co:5432/postgres" style="margin-top: 4px;">
+              </div>
+            </div>
+            
+            <div class="widget-card">
+              <div class="widget-header">
+                <div class="widget-title">
+                  <i class="fa-solid fa-bell-slash"></i> Threshold Alerts Config
+                </div>
+              </div>
+              
+              <div class="gis-input-group">
+                <label>Auto-Trigger SOS warning thresholds (XGBoost disaster prob)</label>
+                <div style="display: flex; gap: 10px; margin-top: 6px; align-items: center;">
+                  <input type="number" class="chat-input" value="75" style="width: 80px; padding: 8px;">
+                  <span style="font-size: 0.85rem; color: var(--text-secondary);">% Probability. Trigger warning SMS to residents immediately.</span>
+                </div>
+              </div>
+              
+              <div class="gis-input-group" style="margin-top: 15px;">
+                <label>River Danger Level Alert Threshold</label>
+                <div style="display: flex; gap: 10px; margin-top: 6px; align-items: center;">
+                  <input type="number" class="chat-input" value="5.0" step="0.1" style="width: 80px; padding: 8px;">
+                  <span style="font-size: 0.85rem; color: var(--text-secondary);">meters gauge height. Send critical notifications to responders.</span>
+                </div>
+              </div>
+              
+              <div style="padding-top: 15px; border-top: 1px solid var(--border-normal); margin-top: 15px;">
+                <button class="btn-analyze" id="btn-save-settings" style="width: 100%;">
+                  <i class="fa-solid fa-floppy-disk"></i> Save System Configurations
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </main>
+  </div>
+  
+  <!-- Sound effect for alerts -->
+  <audio id="alert-siren" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-84.wav" preload="auto"></audio>
+
+  <!-- Load Simulation Scripts -->
+  <script src="mockData.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
